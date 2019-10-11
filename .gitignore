@@ -50,3 +50,15 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# PIC IDE:
+*.r1
+*.r3
+*.mine
+/build
+/debug
+/dist
+/HEX
+/nbproject
+/funclist
+/Makefile
