@@ -26,7 +26,16 @@
 /**/
 //static u8 Return_Time_Data = 0x00;                  //时间计数返回值 
 static u8 Sleep_Work_Mode_Count_g = 0x00;           //睡眠延时计数标志位
-extern u8 Time_5ms_Flag_g = 0;
+extern u8 Time_5ms_Flag_g;
+extern u8 Cnt_Num;
+extern u8 Error_Flag;
+
+extern u8 TC04_ID_Num[20];//ID数据存储
+extern u8 TC04_ID_Cnt[20];//ID统计
+extern u8 TC04_Off_Line_Val_Buff[20];//离线标志位
+extern u8 TC04_Off_Line_Cnt_Buff[20];//离线标志位
+extern u8 TC04_Off_Time_Cnt_g;
+
 /***************函数申明**************/
 /**/
 /*************************************/
@@ -248,6 +257,21 @@ static void Sys_Sleep_Work_Mode(void)
         MCP2515_Enter_Sleep_Mode();      
 
         ACC_OFF_Sys_Init();		
+		/****************************************************************/
+		//清除电池箱数量
+		//20191012
+		//arhen
+        Cnt_Num = 0;       
+        memset(TC04_ID_Cnt, 0, 20); // 将 TC04_ID_Cnt 数组清零
+        memset(TC04_ID_Num, 0, 20); // 将 TC04_ID_Num 数组清零
+        memset(TC04_Off_Line_Val_Buff, 0, 20); // 将 TC04_Off_Line_Val_Buff 数组清零
+        memset(TC04_Off_Line_Cnt_Buff, 0, 20); // 将 TC04_Off_Line_Cnt_Buff 数组清零        
+		/****************************************************************/       
+		//清除电池箱数量
+		//20191012
+		//arhen        
+        Error_Flag = 0;   
+
 		/****************************************************************/	
 		/****************************************************************/
 		//确定系统进入了睡眠模式，执行睡眠指令SLEEP();

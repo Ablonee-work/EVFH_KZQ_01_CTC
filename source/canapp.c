@@ -118,7 +118,8 @@ void Get_TC04_CAN_Data(void)
         CAN_Receive_Interrupt_Data(CAN_Receive_Data);//读取CAN报文数据
         
         BOX_ID_Num = RXB0EIDL;//获取电池箱编号
-#if 0
+#if 1
+    #if 0
         /*************************************************************/
         //屏蔽预警监测、传感器故障检测
         //20190802
@@ -129,6 +130,17 @@ void Get_TC04_CAN_Data(void)
             CAN_Receive_Data[1] = 0x00;
             CAN_Receive_Data[7] = 0x00;            
         }
+    #endif
+        /*************************************************************/
+        //屏蔽预警监测、传感器故障检测
+        //20190802
+        //ahren
+        if((0x88 == CAN_Receive_Data[7]))
+        {
+            CAN_Receive_Data[0] = 0x00;
+            CAN_Receive_Data[1] = 0x00;
+            CAN_Receive_Data[7] = 0x00;            
+        }        
 #endif
         //将 CAN_Receive_Data 复制给 TC04_CAN_Data_Buff        
         memcpy(TC04_CAN_Data_Buff, CAN_Receive_Data, 8); 
