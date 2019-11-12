@@ -42,7 +42,7 @@ u8 TC04_ID_Num[16]      = {0};//ID数据存储
 u8 TC04_ID_Cnt[16]      = {0};//ID统计
 
 u8 CAN_Data_Normal[9]     = {00,00,0xFF,0xFF,0xFF,0xFF,0xFF,00,00};//TJA1042正常数据报文
-u8 TBOX_CAN_Data_Normal[9]     = {0x01,0x00,0x02,0x00,0x13,0x08,0x13,0xFF,00};//软硬件版本信息
+u8 TBOX_CAN_Data_Normal[9]     = {0x01,0x00,0x02,0x01,0x13,0x0B,0x08,0xFF,00};//软硬件版本信息
 u8 TC04_01_11_Buff[9]   = {0};//设备未设置ID时使用，只能使用一台
 u8 NULL_Buff[9] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 u8 TC04_Off_Line_Val_Buff[16] = 0;//离线标志位
@@ -465,6 +465,12 @@ void Sent_TC04_CAN_Data(void)
     if ((0x01 == MCP2515_Sent_Time_Flag))
     {
         MCP2515_Sent_Time_Flag = 0;
+        /**********************************************/
+        //依据客户协议，屏蔽此段代码
+        //20191108
+        //ahren
+        /**********************************************/        
+    #if 0
         MCP2515_One_Min_Cnt++;
         if (0x0A == MCP2515_One_Min_Cnt)
         {
@@ -488,6 +494,24 @@ void Sent_TC04_CAN_Data(void)
                 //NOP();NOP();NOP();NOP();NOP();NOP();                
             } 
         } 
+    #endif
+        /**********************************************/      
+        /**********************************************/
+        //依据客户协议，修改发送电池箱编码，便量为-1
+        //20191108
+        //ahren
+        /**********************************************/         
+
+        MCP2515_Sent_Cnt++;//电池箱编号计数 
+        if (0x01 == MCP2515_One_Min_Flag)
+        {
+            MCP2515_One_Min_Flag = 0;         
+            MCP2515_TxID[1] = 0xFF;   
+            MCP2515_TxID[2] = 0x30;                  
+            MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
+            //NOP();NOP();NOP();NOP();NOP();NOP();                
+        }  
+        /**********************************************/              
 #if 1
         //选择对应的电池箱编号，将数据发送到车身仪表
         if (0x00 == MCP2515_One_Min_Flag)
@@ -495,34 +519,34 @@ void Sent_TC04_CAN_Data(void)
             switch (MCP2515_Sent_Cnt)
             {
                 case 0x01:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt, TC04_One_Buff, 8, MCP2515_Life_Cnt);                          
+                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_One_Buff, 8, MCP2515_Life_Cnt);                          
                     break;
                 case 0x02:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt, TC04_Two_Buff, 8, MCP2515_Life_Cnt); 
+                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Two_Buff, 8, MCP2515_Life_Cnt); 
                     break;
                 case 0x03:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt, TC04_Three_Buff, 8, MCP2515_Life_Cnt);
+                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Three_Buff, 8, MCP2515_Life_Cnt);
                     break;
                 case 0x04:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt, TC04_Four_Buff, 8, MCP2515_Life_Cnt); 
+                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Four_Buff, 8, MCP2515_Life_Cnt); 
                     break;
                 case 0x05:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt, TC04_Five_Buff, 8, MCP2515_Life_Cnt); 
+                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Five_Buff, 8, MCP2515_Life_Cnt); 
                     break;   
                 case 0x06:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt, TC04_Six_Buff, 8, MCP2515_Life_Cnt); 
+                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Six_Buff, 8, MCP2515_Life_Cnt); 
                     break;                 
                 case 0x07:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt, TC04_Seven_Buff, 8, MCP2515_Life_Cnt);  
+                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Seven_Buff, 8, MCP2515_Life_Cnt);  
                     break;
                 case 0x08:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt, TC04_Eight_Buff, 8, MCP2515_Life_Cnt);  
+                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Eight_Buff, 8, MCP2515_Life_Cnt);  
                     break;
                 case 0x09:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt, TC04_Nine_Buff, 8, MCP2515_Life_Cnt);  
+                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Nine_Buff, 8, MCP2515_Life_Cnt);  
                     break;   
                 case 0x0A:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt, TC04_Ten_Buff, 8, MCP2515_Life_Cnt);  
+                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Ten_Buff, 8, MCP2515_Life_Cnt);  
                     break;
                 default:
                     break;
@@ -533,7 +557,24 @@ void Sent_TC04_CAN_Data(void)
                 MCP2515_Sent_Cnt = 0;  
                 MCP2515_One_Min_Flag = 0; 
             } 
+        }
+        /**********************************************/
+        //依据客户协议，修改发送版本报文周期时间
+        //20191108
+        //ahren
+        /**********************************************/ 
+        MCP2515_One_Min_Cnt++;
+        if (0x0A == MCP2515_One_Min_Cnt)
+        {
+            MCP2515_One_Min_Cnt = 0;
+            MCP2515_One_Min_Flag = 1;
+            MCP2515_TxID[1] = 0xFE;   
+            MCP2515_TxID[2] = 0xDA;     
+            MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
+            //NOP();NOP();NOP();NOP();NOP();NOP(); 
+            TBOX_MCP2515_Sent(0, TBOX_CAN_Data_Normal, 8);                    
         }    
+        /**********************************************/           
 #endif
     } 
 }
@@ -716,7 +757,7 @@ void CAN_Data_Choice_Analysis(void)
         /**********************************/            
         if((Cnt_Num_Flag == 0) || (Cnt_Num_Flag == 0xFF))
         {
-            eeprom_write(0x03,0x06);//将电池箱数量写入内容EEPROM里面
+            eeprom_write(0x03,0x08);//将电池箱数量写入内容EEPROM里面
             NOP();NOP();NOP();NOP();
             Cnt_Num = eeprom_read(0x03);//将电池箱数量从EEPROM读出
             NOP();NOP();NOP();NOP();        
