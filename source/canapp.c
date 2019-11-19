@@ -42,7 +42,7 @@ u8 TC04_ID_Num[16]      = {0};//ID数据存储
 u8 TC04_ID_Cnt[16]      = {0};//ID统计
 
 u8 CAN_Data_Normal[9]     = {00,00,0xFF,0xFF,0xFF,0xFF,0xFF,00,00};//TJA1042正常数据报文
-u8 TBOX_CAN_Data_Normal[9]     = {0x01,0x00,0x02,0x01,0x13,0x0B,0x08,0xFF,00};//软硬件版本信息
+u8 TBOX_CAN_Data_Normal[9]     = {0x01,0x00,0x02,0x00,0x13,0x0B,0x0C,0xFF,00};//软硬件版本信息
 u8 TC04_01_11_Buff[9]   = {0};//设备未设置ID时使用，只能使用一台
 u8 NULL_Buff[9] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 u8 TC04_Off_Line_Val_Buff[16] = 0;//离线标志位
@@ -505,11 +505,13 @@ void Sent_TC04_CAN_Data(void)
         MCP2515_Sent_Cnt++;//电池箱编号计数 
         if (0x01 == MCP2515_One_Min_Flag)
         {
-            MCP2515_One_Min_Flag = 0;         
+            MCP2515_One_Min_Flag = 0;     
+            MCP2515_TxID[0] = 0x18;                 
             MCP2515_TxID[1] = 0xFF;   
-            MCP2515_TxID[2] = 0x30;                  
+            MCP2515_TxID[2] = 0x30;
+            MCP2515_TxID[3] = 0x1D;                              
             MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
-            //NOP();NOP();NOP();NOP();NOP();NOP();                
+            NOP();NOP();NOP();NOP();NOP();NOP();                
         }  
         /**********************************************/              
 #if 1
@@ -568,10 +570,13 @@ void Sent_TC04_CAN_Data(void)
         {
             MCP2515_One_Min_Cnt = 0;
             MCP2515_One_Min_Flag = 1;
+            MCP2515_TxID[0] = 0x18;              
             MCP2515_TxID[1] = 0xFE;   
-            MCP2515_TxID[2] = 0xDA;     
+            MCP2515_TxID[2] = 0xDA;  
+            MCP2515_TxID[3] = 0x1D;     
+            delay_10us(100);  
             MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
-            //NOP();NOP();NOP();NOP();NOP();NOP(); 
+            NOP();NOP();NOP();NOP();NOP();NOP(); 
             TBOX_MCP2515_Sent(0, TBOX_CAN_Data_Normal, 8);                    
         }    
         /**********************************************/           
