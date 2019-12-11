@@ -25,43 +25,44 @@
 
 /***************标志位申明************/
 /**/
-u8 TC04_CAN_Data_Buff[9] = {0};//缓存TC04 CAN数据
+u8 TC04_One_Buff[9]         = {0x00};//1号电池箱CAN数据
+u8 TC04_Two_Buff[9]         = {0x00};//2号电池箱CAN数据
+u8 TC04_Three_Buff[9]       = {0x00};//3号电池箱CAN数据
+u8 TC04_Four_Buff[9]        = {0x00};//4号电池箱CAN数据
+u8 TC04_Five_Buff[9]        = {0x00};//5号电池箱CAN数据
+u8 TC04_Six_Buff[9]         = {0x00};//6号电池箱CAN数据
+u8 TC04_Seven_Buff[9]       = {0x00};//7号电池箱CAN数据
+u8 TC04_Eight_Buff[9]       = {0x00};//8号电池箱CAN数据
+u8 TC04_Nine_Buff[9]        = {0x00};//9号电池箱CAN数据
+u8 TC04_Ten_Buff[9]         = {0x00};//10号电池箱CAN数据
+u8 TC04_Eleven_Buff[9]      = {0x00};//11号电池箱CAN数据
+u8 TC04_Twelve_Buff[9]      = {0x00};//12号电池箱CAN数据
+u8 TC04_Thirteen_Buff[9]    = {0x00};//13号电池箱CAN数据
+u8 TC04_Fourteen_Buff[9]    = {0x00};//14号电池箱CAN数据
+u8 TC04_Fifteen_Buff[9]     = {0x00};//15号电池箱CAN数据
+u8 TC04_Sixteen_Buff[9]     = {0x00};//16号电池箱CAN数据
 
-u8 TC04_One_Buff[9]     = {0};//1号电池箱CAN数据
-u8 TC04_Two_Buff[9]     = {0};//2号电池箱CAN数据
-u8 TC04_Three_Buff[9]   = {0};//3号电池箱CAN数据
-u8 TC04_Four_Buff[9]    = {0};//4号电池箱CAN数据
-u8 TC04_Five_Buff[9]    = {0};//5号电池箱CAN数据
-u8 TC04_Six_Buff[9]     = {0};//6号电池箱CAN数据
-u8 TC04_Seven_Buff[9]   = {0};//7号电池箱CAN数据
-u8 TC04_Eight_Buff[9]   = {0};//8号电池箱CAN数据
-u8 TC04_Nine_Buff[9]    = {0};//9号电池箱CAN数据
-u8 TC04_Ten_Buff[9]     = {0};//10号电池箱CAN数据
-
-u8 TC04_ID_Num[16]      = {0};//ID数据存储
-u8 TC04_ID_Cnt[16]      = {0};//ID统计
-
-u8 CAN_Data_Normal[9]     = {00,00,0xFF,0xFF,0xFF,0xFF,0xFF,00,00};//TJA1042正常数据报文
-u8 TBOX_CAN_Data_Normal[9]     = {0x01,0x00,0x02,0x00,0x13,0x0B,0x0C,0xFF,00};//软硬件版本信息
-u8 TC04_01_11_Buff[9]   = {0};//设备未设置ID时使用，只能使用一台
-u8 NULL_Buff[9] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
-u8 TC04_Off_Line_Val_Buff[16] = 0;//离线标志位
-u8 TC04_Off_Line_Cnt_Buff[16] = 0;//离线标志位
+u8 TC04_CAN_Data_Buff[9]    = {0x00};//缓存TC04 CAN数据
+u8 TC04_ID_Num[20]          = {0x00};//ID数据存储
+u8 TC04_ID_Cnt[20]          = {0x00};//ID统计
 
 u8 TBOX_Error_Buff_Flag[10] = {0x00};
-u8 TBOX_Error_Buff[10] = {0x00};
+//u8 TBOX_Error_Buff[10]      = {0x00};
 
+u8 CAN_Data_Normal[9] = {00,00,0xFF,0xFF,0xFF,0xFF,0xFF,00,00};//TJA1042正常数据报文
+//u8 NULL_Buff[9] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+
+u8 TC04_Off_Line_Val_Buff[20] = 0;//离线标志位
+u8 TC04_Off_Line_Cnt_Buff[20] = 0;//离线标志位
+u8 TC04_Off_Time_Cnt_g = 0;
+
+u8 Sent_Flag   = 0;
+u8 Sent_Cnt    = 0;
+u8 Error_Flag  = 0;
+u8 Error_Cnt   = 0;
+u8 Cnt_Num     = 0;
 u8 Time_5ms_Flag_g = 0;
-u8 Sent_Flag = 0;
-u8 Sent_Cnt  = 0;
-u8 Error_Flag = 0;
-u8 Error_Cnt = 0;
-u8 Cnt_Num = 0;
 
-u8 TBOX_3Time_Flag = 0;
-u8 TBOX_3Time_Cnt_Flag  = 0;
-u8 TBOX_3Time_Sent_Cnt = 0;
-u8 TBOX_3Time_Cnt = 0;
 /*************************************/
 
 /***************函数申明**************/
@@ -69,9 +70,6 @@ u8 TBOX_3Time_Cnt = 0;
 void TC04_Num_Set(void);
 void Equipment_Off_Line_Det(void);
 u8 CAN_Sent_Time_Choice(void);
-void TBOX_MCP2515_Sent(u8 BOX_Num, u8 *CAN_TX_Buf, u8 len);
-/*************************************/
-
 /*************************************/
 
 //*******************************************/
@@ -93,8 +91,6 @@ void TC04_CAN_Data_Analysis(u8 ID,u8 *Data_Buff_New)
     for(i=0; i<8; i++)
     {
         Data_Buff_New[i] = TC04_CAN_Data_Buff[i];
-    
-        //Data_Buff_New[0] = Box_Num_ID;//电池箱编号赋值给第一个数组
     }
     Data_Buff_New[0] = Box_Num_ID;//电池箱编号赋值给第一个数组
     //Data_Buff_New[6] = 0xFF;   
@@ -118,8 +114,7 @@ void Get_TC04_CAN_Data(void)
         CAN_Receive_Interrupt_Data(CAN_Receive_Data);//读取CAN报文数据
         
         BOX_ID_Num = RXB0EIDL;//获取电池箱编号
-#if 1
-    #if 0
+#if 0
         /*************************************************************/
         //屏蔽预警监测、传感器故障检测
         //20190802
@@ -130,18 +125,21 @@ void Get_TC04_CAN_Data(void)
             CAN_Receive_Data[1] = 0x00;
             CAN_Receive_Data[7] = 0x00;            
         }
-    #endif
+#endif
+        
+#if 1
         /*************************************************************/
-        //屏蔽预警监测、传感器故障检测
-        //20190802
+        //屏蔽传感器故障检测
+        //20191101
         //ahren
         if((0x88 == CAN_Receive_Data[7]))
         {
             CAN_Receive_Data[0] = 0x00;
             CAN_Receive_Data[1] = 0x00;
             CAN_Receive_Data[7] = 0x00;            
-        }        
-#endif
+        }
+#endif        
+        /*************************************************************/
         //将 CAN_Receive_Data 复制给 TC04_CAN_Data_Buff        
         memcpy(TC04_CAN_Data_Buff, CAN_Receive_Data, 8); 
         
@@ -177,12 +175,25 @@ void Get_TC04_CAN_Data(void)
                 break;
             case 0x0A:
                 TC04_CAN_Data_Analysis(BOX_ID_Num,TC04_Ten_Buff);//获取10号电池箱报文数据       
-            break;            
-            case 0x1D:
-                TC04_CAN_Data_Analysis(BOX_ID_Num,TC04_01_11_Buff); //获取6号电池箱报文数据 
-                memcpy(TC04_One_Buff, TC04_01_11_Buff, 8);          //将 TC04_01_11_Buff 复制给TC04_One_Buff                   
-            break;
-
+            break; 
+            case 0x0B:
+                TC04_CAN_Data_Analysis(BOX_ID_Num,TC04_Eleven_Buff);//获取10号电池箱报文数据       
+            break;     
+            case 0x0C:
+                TC04_CAN_Data_Analysis(BOX_ID_Num,TC04_Twelve_Buff);//获取10号电池箱报文数据       
+            break;  
+            case 0x0D:
+                TC04_CAN_Data_Analysis(BOX_ID_Num,TC04_Thirteen_Buff);//获取10号电池箱报文数据       
+            break;  
+            case 0x0E:
+                TC04_CAN_Data_Analysis(BOX_ID_Num,TC04_Fourteen_Buff);//获取10号电池箱报文数据       
+            break; 
+            case 0x0F:
+                TC04_CAN_Data_Analysis(BOX_ID_Num,TC04_Fifteen_Buff);//获取10号电池箱报文数据       
+            break;   
+            case 0x10:
+                TC04_CAN_Data_Analysis(BOX_ID_Num,TC04_Sixteen_Buff);//获取10号电池箱报文数据       
+            break;                                                                                          
             default:
                 break;
         }	
@@ -206,6 +217,7 @@ void Get_TC04_CAN_Data(void)
         //ahren
         RXFUL=0;//打开接收缓冲器来接收新信息    
     }
+      
 }
 
 //*******************************************/
@@ -219,10 +231,12 @@ void Get_TC04_CAN_Data(void)
 u8 TC04_Off_Line_Det(u8 BOX_Num, u8 *Data_Buff, u8 Life_Signal_Num)
 {
     u8 Off_Line_Val = 0;
+
     u8 i = 0;
     //判断心跳包数据是否与前一次一致
     if (TC04_Off_Line_Val_Buff[BOX_Num] == Data_Buff[Life_Signal_Num])
     {
+
         //将心跳相同的计数次数赋值给Off_Line_Val
         Off_Line_Val = TC04_Off_Line_Cnt_Buff[BOX_Num];
 
@@ -230,13 +244,14 @@ u8 TC04_Off_Line_Det(u8 BOX_Num, u8 *Data_Buff, u8 Life_Signal_Num)
 
         //将自加后的值赋值给对应计数的Buff中         
         TC04_Off_Line_Cnt_Buff[BOX_Num] = Off_Line_Val;
+
     }
     else
     {
         //将最新的心跳包数据赋值给对应的心跳数据的Buff中
         TC04_Off_Line_Val_Buff[BOX_Num] = Data_Buff[Life_Signal_Num];
         
-        TC04_Off_Line_Cnt_Buff[BOX_Num] = 0; //将心跳计数清零                           
+        TC04_Off_Line_Cnt_Buff[BOX_Num] = 0;                            //将心跳计数清零
     }
     //离线故障赋值
     if (Off_Line_Val >= 0x02)
@@ -270,22 +285,20 @@ u8 TC04_Off_Line_Det(u8 BOX_Num, u8 *Data_Buff, u8 Life_Signal_Num)
 /*******************************************/
 void Sent_TC04_CAN_Data(void)
 {
-    static u8 Cnt = 0;
-    static uint16 Life_Signal_Cnt = 0;
-    u8 ID_Cnt = 0;
-    u8 Sent_Time_Flag = 0;
     u8 i = 0;
     u8 j = 0;
-    
-    u8 TJA1042_Sent_Time_Flag = 0;
-    static u8 TJA1042_Sent_Time_Cnt = 0;
+    u8 ID_Cnt = 0;
+    u8 Sent_Time_Flag = 0;
 
+    u8 TJA1042_Sent_Time_Flag = 0;
     u8 MCP2515_Sent_Time_Flag = 0;
-    u8 MCP2515_One_Sec_Time_Flag = 0;
-    static u8 MCP2515_One_Min_Flag = 0;
-    static u8 MCP2515_Sent_Cnt = 0;
-    static u8 MCP2515_One_Min_Cnt = 0;
-    static uint16 MCP2515_Life_Cnt = 0;
+
+    static u8 Cnt = 0;
+    static u8 Length_Val = 0x08;//报文数据长度
+    static uint16 Life_Signal_Cnt = 0;
+    static u8 TJA1042_Sent_Time_Cnt = 0;    
+
+     u8 MCP2515_One_Sec_Time_Flag = 0;
     
     /*************************************************/
     //每隔5ms x N = 5Nms 更新每个探测器的数组数据
@@ -299,9 +312,11 @@ void Sent_TC04_CAN_Data(void)
     //获取CAN发送周期时间返回值
     //ahren
     //20190719   
-    Sent_Time_Flag = CAN_Sent_Time_Choice();
+    Sent_Time_Flag = CAN_Sent_Time_Choice(); 
+
     /*************************************************/
-    
+    //判断分析设备是否离线
+    Equipment_Off_Line_Det();  
     /*************************************************/
     //确保TJA1042发送的周期一直为1S
     //ahren
@@ -310,28 +325,28 @@ void Sent_TC04_CAN_Data(void)
     {
         Sent_Time_Flag = 0;
         TJA1042_Sent_Time_Flag = 1;
-        MCP2515_Sent_Time_Flag = 1;//MCP2515发送标志位置1
+        MCP2515_Sent_Time_Flag = 1;
     }
     else if (Sent_Time_Flag == 0x02)//500ms返回值
     {
         Sent_Time_Flag = 0;
-        MCP2515_Sent_Time_Flag = 1;//MCP2515发送标志位置1
         TJA1042_Sent_Time_Cnt++;
         if (0x02 == TJA1042_Sent_Time_Cnt)
         {
             TJA1042_Sent_Time_Cnt = 0;
-            TJA1042_Sent_Time_Flag = 1;            
+            TJA1042_Sent_Time_Flag = 1;
+            MCP2515_Sent_Time_Flag = 1;            
         }      
     }
     else if (Sent_Time_Flag == 0x01)//250ms返回值
     {
         Sent_Time_Flag = 0;
-        TJA1042_Sent_Time_Cnt++;
-        MCP2515_Sent_Time_Flag = 1;//MCP2515发送标志位置1        
+        TJA1042_Sent_Time_Cnt++;   
         if (0x04 == TJA1042_Sent_Time_Cnt)
         {
             TJA1042_Sent_Time_Cnt = 0;
             TJA1042_Sent_Time_Flag = 1;
+            MCP2515_Sent_Time_Flag = 1;
             MCP2515_One_Sec_Time_Flag = 1;            
         }      
     }    
@@ -344,24 +359,17 @@ void Sent_TC04_CAN_Data(void)
         TJA1042_Sent_Time_Flag = 0;
         //CAN心跳包数据
         Life_Signal_Cnt++;  
-        MCP2515_Life_Cnt++;  
         if(Life_Signal_Cnt > 0xFF)
         {
-            Life_Signal_Cnt = 0;  
-            MCP2515_Life_Cnt = 0;         
-        }
-#if 0        
-        MCP2515_CAN_Tx_Buffer(0, CAN_Data_Normal, 8, Life_Signal_Cnt); //CAN2 2515发送缓存数据
-        TJA1042_CAN_Send_Data(0, CAN_Data_Normal, 8, Life_Signal_Cnt);//通过TJA1042发送报文给主机             
-#endif
-        
+            Life_Signal_Cnt = 0;    
+        }        
 #if 1
         /*************************************************/
         //每隔1s x N = Ns 检测一次探测器是否离线
         //N为探测器数量
         //ahren
         //20190717      
-        Equipment_Off_Line_Det();
+        //Equipment_Off_Line_Det();
         /*************************************************/        
         if(Error_Flag == 0)
         {
@@ -390,58 +398,60 @@ void Sent_TC04_CAN_Data(void)
             }
             if(Sent_Cnt == Error_Cnt)//异常数据轮询结束
             {
-                memset(TC04_ID_Cnt, 0, 16); // 将 TC04_ID_Cnt 数组清零
-                //memset(TBOX_Error_Buff, 0, 10); // 将 TC04_ID_Cnt 数组清零
+                memset(TC04_ID_Cnt, 0, 20); // 将 TC04_ID_Cnt 数组清零
                 Error_Cnt = 0;//异常数据统计清零
                 Error_Flag = 0; //异常数据标志位清零
-            } 
-#if 0            
-            NOP();NOP();NOP();NOP();NOP();NOP(); 
-            MCP2515_TxID[3] = 0xA5;   
-            MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
-#endif            
+            }           
             switch (Sent_Flag)//判断是哪个电池箱编号
             {
-                case 0x01:
-                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_One_Buff, 8, Life_Signal_Cnt);//通过TJA1042发送报文给主机 
-                    //MCP2515_CAN_Tx_Buffer(Sent_Flag, TC04_One_Buff, 8, MCP2515_Life_Cnt);                     
+                case 0x01:              
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_One_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机                             
                     break;
                 case 0x02:
-                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Two_Buff, 8, Life_Signal_Cnt);//通过TJA1042发送报文给主机
-                    //MCP2515_CAN_Tx_Buffer(Sent_Flag, TC04_Two_Buff, 8, MCP2515_Life_Cnt);  
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Two_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
                     break;
                 case 0x03:
-                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Three_Buff, 8, Life_Signal_Cnt); //通过TJA1042发送报文给主机
-                    //MCP2515_CAN_Tx_Buffer(Sent_Flag, TC04_Three_Buff, 8, MCP2515_Life_Cnt);  
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Three_Buff, Length_Val, Life_Signal_Cnt); //通过TJA1042发送报文给主机 
                     break;
                 case 0x04:
-                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Four_Buff, 8, Life_Signal_Cnt);//通过TJA1042发送报文给主机
-                    //MCP2515_CAN_Tx_Buffer(Sent_Flag, TC04_Four_Buff, 8, MCP2515_Life_Cnt);
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Four_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
                     break;
                 case 0x05:
-                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Five_Buff, 8, Life_Signal_Cnt);//通过TJA1042发送报文给主机 
-                    //MCP2515_CAN_Tx_Buffer(Sent_Flag, TC04_Five_Buff, 8, MCP2515_Life_Cnt);                      
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Five_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
                     break;   
                 case 0x06:
-                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Six_Buff, 8, Life_Signal_Cnt);//通过TJA1042发送报文给主机
-                    //MCP2515_CAN_Tx_Buffer(Sent_Flag, TC04_Six_Buff, 8, MCP2515_Life_Cnt);                      
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Six_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
                     break;                 
                 case 0x07:
-                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Seven_Buff, 8, Life_Signal_Cnt); //通过TJA1042发送报文给主机 
-                    //MCP2515_CAN_Tx_Buffer(Sent_Flag, TC04_Seven_Buff, 8, MCP2515_Life_Cnt);                      
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Seven_Buff, Length_Val, Life_Signal_Cnt); //通过TJA1042发送报文给主机 
                     break;
                 case 0x08:
-                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Eight_Buff, 8, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
-                    //MCP2515_CAN_Tx_Buffer(Sent_Flag, TC04_Eight_Buff, 8, MCP2515_Life_Cnt);                      
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Eight_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
                     break;
                 case 0x09:
-                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Nine_Buff, 8, Life_Signal_Cnt);//通过TJA1042发送报文给主机
-                    //MCP2515_CAN_Tx_Buffer(Sent_Flag, TC04_Nine_Buff, 8, MCP2515_Life_Cnt);                      
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Nine_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
                     break;   
                 case 0x0A:
-                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Ten_Buff, 8, Life_Signal_Cnt);//通过TJA1042发送报文给主机
-                    //MCP2515_CAN_Tx_Buffer(Sent_Flag, TC04_Ten_Buff, 8, MCP2515_Life_Cnt);                      
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Ten_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
                     break;
+                case 0x0B:
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Eleven_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
+                    break; 
+                case 0x0C:
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Twelve_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
+                    break;
+                case 0x0D:
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Thirteen_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
+                    break;
+                case 0x0E:
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Fourteen_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
+                    break;
+                case 0x0F:
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Fifteen_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
+                    break;
+                case 0x10:
+                    TJA1042_CAN_Send_Data(Sent_Flag, TC04_Sixteen_Buff, Length_Val, Life_Signal_Cnt);//通过TJA1042发送报文给主机  
+                    break;                                                               
                 default:
                     break;
             }        
@@ -455,133 +465,19 @@ void Sent_TC04_CAN_Data(void)
             /***********************************************************/  
             if ((Cnt_Num != 0) && (Cnt_Num != 0xFF))
             {
-                //MCP2515_CAN_Tx_Buffer(0, CAN_Data_Normal, 8, Life_Signal_Cnt); //CAN2 2515发送缓存数据
                 TJA1042_CAN_Send_Data(0, CAN_Data_Normal, 8, Life_Signal_Cnt);//通过TJA1042发送报文给主机 
             }
         }
 #endif
     }
-    //MCP2515 发送数据解析与处理
-    if ((0x01 == MCP2515_Sent_Time_Flag))
-    {
-        MCP2515_Sent_Time_Flag = 0;
-        /**********************************************/
-        //依据客户协议，屏蔽此段代码
-        //20191108
-        //ahren
-        /**********************************************/        
-    #if 0
-        MCP2515_One_Min_Cnt++;
-        if (0x0A == MCP2515_One_Min_Cnt)
-        {
-            MCP2515_One_Min_Cnt = 0;
-            MCP2515_One_Min_Flag = 1;
-            MCP2515_TxID[1] = 0xFE;   
-            MCP2515_TxID[2] = 0xDA;     
-            MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
-            //NOP();NOP();NOP();NOP();NOP();NOP(); 
-            TBOX_MCP2515_Sent(0, TBOX_CAN_Data_Normal, 8);            
-        }
-        else
-        {
-            MCP2515_Sent_Cnt++;//电池箱编号计数 
-            if (0x01 == MCP2515_One_Min_Flag)
-            {
-                MCP2515_One_Min_Flag = 0;         
-                MCP2515_TxID[1] = 0xFF;   
-                MCP2515_TxID[2] = 0x30;                  
-                MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
-                //NOP();NOP();NOP();NOP();NOP();NOP();                
-            } 
-        } 
-    #endif
-        /**********************************************/      
-        /**********************************************/
-        //依据客户协议，修改发送电池箱编码，便量为-1
-        //20191108
-        //ahren
-        /**********************************************/         
+    /****************************************/	
+    //车厂客户应用                      
+    //ahren
+    //20191206
+    /*************************************/	    
+    MCP2515_User_Agreement(MCP2515_Sent_Time_Flag); 
 
-        MCP2515_Sent_Cnt++;//电池箱编号计数 
-        if (0x01 == MCP2515_One_Min_Flag)
-        {
-            MCP2515_One_Min_Flag = 0;     
-            MCP2515_TxID[0] = 0x18;                 
-            MCP2515_TxID[1] = 0xFF;   
-            MCP2515_TxID[2] = 0x30;
-            MCP2515_TxID[3] = 0x1D;                              
-            MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
-            NOP();NOP();NOP();NOP();NOP();NOP();                
-        }  
-        /**********************************************/              
-#if 1
-        //选择对应的电池箱编号，将数据发送到车身仪表
-        if (0x00 == MCP2515_One_Min_Flag)
-        {
-            switch (MCP2515_Sent_Cnt)
-            {
-                case 0x01:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_One_Buff, 8, MCP2515_Life_Cnt);                          
-                    break;
-                case 0x02:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Two_Buff, 8, MCP2515_Life_Cnt); 
-                    break;
-                case 0x03:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Three_Buff, 8, MCP2515_Life_Cnt);
-                    break;
-                case 0x04:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Four_Buff, 8, MCP2515_Life_Cnt); 
-                    break;
-                case 0x05:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Five_Buff, 8, MCP2515_Life_Cnt); 
-                    break;   
-                case 0x06:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Six_Buff, 8, MCP2515_Life_Cnt); 
-                    break;                 
-                case 0x07:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Seven_Buff, 8, MCP2515_Life_Cnt);  
-                    break;
-                case 0x08:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Eight_Buff, 8, MCP2515_Life_Cnt);  
-                    break;
-                case 0x09:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Nine_Buff, 8, MCP2515_Life_Cnt);  
-                    break;   
-                case 0x0A:
-                    MCP2515_CAN_Tx_Buffer(MCP2515_Sent_Cnt-1, TC04_Ten_Buff, 8, MCP2515_Life_Cnt);  
-                    break;
-                default:
-                    break;
-            }
-            //电池箱编号数据判断
-            if(MCP2515_Sent_Cnt == Cnt_Num)
-            {
-                MCP2515_Sent_Cnt = 0;  
-                MCP2515_One_Min_Flag = 0; 
-            } 
-        }
-        /**********************************************/
-        //依据客户协议，修改发送版本报文周期时间
-        //20191108
-        //ahren
-        /**********************************************/ 
-        MCP2515_One_Min_Cnt++;
-        if (0x0A == MCP2515_One_Min_Cnt)
-        {
-            MCP2515_One_Min_Cnt = 0;
-            MCP2515_One_Min_Flag = 1;
-            MCP2515_TxID[0] = 0x18;              
-            MCP2515_TxID[1] = 0xFE;   
-            MCP2515_TxID[2] = 0xDA;  
-            MCP2515_TxID[3] = 0x1D;     
-            delay_10us(100);  
-            MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
-            NOP();NOP();NOP();NOP();NOP();NOP(); 
-            TBOX_MCP2515_Sent(0, TBOX_CAN_Data_Normal, 8);                    
-        }    
-        /**********************************************/           
-#endif
-    } 
+    /*************************************/	    
 }
 
 //*******************************************/
@@ -618,7 +514,7 @@ void TC04_Num_Set(void)
 {
     u8 TC04_Num = 0;
     u8 TC04_Time_Val = 0;
-   
+ 
     //通过CAN设置设备数量
     CAN_Receive_Interrupt_Data(CAN_Receive_Data);                   //读取CAN报文数据
     //将 CAN_Receive_Data 复制给 CAN_TX0_Buff        
@@ -670,10 +566,8 @@ void TC04_Num_Set(void)
             CAN_TX0_Buff[3] = eeprom_read(0x08);                      
             NOP();NOP();NOP();NOP();  
             
-            CAN_TX0_Buff[2] = 0x00;
-
-
             CAN_TX0_Buff[0] = 0x23;
+            CAN_TX0_Buff[2] = 0x00;
             CAN_TX0_Buff[7] = 0x16;
 
             CAN_Send_8Byte_Data();//通过TJA1042 发送确认
@@ -725,7 +619,7 @@ void CAN_Data_Analysis_Det(u8 Num,u8 *Data_Buff)
 {
     //探测器CAN报文第1个字节或第7个字节不为0
     if((0x00 != Data_Buff[1]) || (0x00 != Data_Buff[7]))
-    {        
+    {       
         if(Data_Buff[0] != 0)
         {
             TC04_ID_Num[Num] = Data_Buff[0];        
@@ -782,7 +676,8 @@ void CAN_Data_Choice_Analysis(void)
         {
             Cnt = 1;//数据从第一个开始
         }        
-    }    
+    }
+    
     switch(Cnt)
     {
         case 0x01:
@@ -815,6 +710,24 @@ void CAN_Data_Choice_Analysis(void)
         case 0x0A:
                 CAN_Data_Analysis_Det(Cnt,TC04_Ten_Buff);//判断第十个探测器数据是否异常
             break;
+        case 0x0B:
+                CAN_Data_Analysis_Det(Cnt,TC04_Eleven_Buff);//获取10号电池箱报文数据       
+            break;     
+        case 0x0C:
+                CAN_Data_Analysis_Det(Cnt,TC04_Twelve_Buff);//获取10号电池箱报文数据       
+            break;  
+        case 0x0D:
+                CAN_Data_Analysis_Det(Cnt,TC04_Thirteen_Buff);//获取10号电池箱报文数据       
+            break;  
+        case 0x0E:
+                CAN_Data_Analysis_Det(Cnt,TC04_Fourteen_Buff);//获取10号电池箱报文数据       
+            break; 
+        case 0x0F:
+                CAN_Data_Analysis_Det(Cnt,TC04_Fifteen_Buff);//获取10号电池箱报文数据       
+            break;   
+        case 0x10:
+                CAN_Data_Analysis_Det(Cnt,TC04_Sixteen_Buff);//获取10号电池箱报文数据       
+            break;             
         default:
             break;    
     }
@@ -831,53 +744,72 @@ void CAN_Data_Choice_Analysis(void)
 void Equipment_Off_Line_Det(void)
 {
     static u8 Cnt = 0;
-
-    if ((Cnt_Num != 0) && (Cnt_Num != 0xFF))
-    //if(1)
+    if(TC04_Off_Time_Cnt_g == 0x32)
     {
-        Cnt++;
-
-        if(Cnt > Cnt_Num)
-        //if(Cnt > 0x06)//判断轮询次数
+        TC04_Off_Time_Cnt_g = 0;
+        if ((Cnt_Num != 0) && (Cnt_Num != 0xFF))
         {
-            Cnt = 1;
-        }     
-    }      
-    
-    switch(Cnt)
-    {
-        case 0x01:
-                TC04_Off_Line_Det(Cnt, TC04_One_Buff, 6);//检测是否离线
-            break;                  
-        case 0x02:
-                TC04_Off_Line_Det(Cnt, TC04_Two_Buff, 6);//检测是否离线
-            break; 
-        case 0x03:
-                TC04_Off_Line_Det(Cnt, TC04_Three_Buff, 6);//检测是否离线
-            break;                  
-        case 0x04:
-                TC04_Off_Line_Det(Cnt, TC04_Four_Buff, 6);//检测是否离线
-            break;
-        case 0x05:
-                TC04_Off_Line_Det(Cnt, TC04_Five_Buff, 6);//检测是否离线
-            break;                  
-        case 0x06:
-                TC04_Off_Line_Det(Cnt, TC04_Six_Buff, 6);//检测是否离线
-            break;
-        case 0x07: 
-                TC04_Off_Line_Det(Cnt,TC04_Seven_Buff, 6);//获取7号电池箱报文数据      
-            break;
-        case 0x08:
-                TC04_Off_Line_Det(Cnt,TC04_Eight_Buff, 6); //获取8号电池箱报文数据        
-            break; 
-        case 0x09:
-                TC04_Off_Line_Det(Cnt,TC04_Nine_Buff, 6);//获取9号电池箱报文数据          
-            break;
-        case 0x0A:
-                TC04_Off_Line_Det(Cnt,TC04_Ten_Buff, 6);//获取10号电池箱报文数据          
-            break;            
-        default:
-            break;    
+            Cnt++;
+
+            if(Cnt > Cnt_Num)
+            {
+                Cnt = 1;
+            }     
+        }      
+
+        switch(Cnt)
+        {
+            case 0x01:
+                    TC04_Off_Line_Det(Cnt, TC04_One_Buff, 6);//检测是否离线
+                break;                  
+            case 0x02:
+                    TC04_Off_Line_Det(Cnt, TC04_Two_Buff, 6);//检测是否离线
+                break; 
+            case 0x03:
+                    TC04_Off_Line_Det(Cnt, TC04_Three_Buff, 6);//检测是否离线
+                break;                  
+            case 0x04:
+                    TC04_Off_Line_Det(Cnt, TC04_Four_Buff, 6);//检测是否离线
+                break;
+            case 0x05:
+                    TC04_Off_Line_Det(Cnt, TC04_Five_Buff, 6);//检测是否离线
+                break;                  
+            case 0x06:
+                    TC04_Off_Line_Det(Cnt, TC04_Six_Buff, 6);//检测是否离线
+                break;
+            case 0x07: 
+                    TC04_Off_Line_Det(Cnt,TC04_Seven_Buff, 6);//获取7号电池箱报文数据      
+                break;
+            case 0x08:
+                    TC04_Off_Line_Det(Cnt,TC04_Eight_Buff, 6); //获取8号电池箱报文数据        
+                break; 
+            case 0x09:
+                    TC04_Off_Line_Det(Cnt,TC04_Nine_Buff, 6);//获取9号电池箱报文数据          
+                break;
+            case 0x0A:
+                    TC04_Off_Line_Det(Cnt,TC04_Ten_Buff, 6);//获取10号电池箱报文数据          
+                break;     
+            case 0x0B:
+                    TC04_Off_Line_Det(Cnt,TC04_Eleven_Buff, 6);//获取11号电池箱报文数据          
+                break;
+            case 0x0C:
+                    TC04_Off_Line_Det(Cnt,TC04_Twelve_Buff, 6);//获取12号电池箱报文数据          
+                break;    
+            case 0x0D:
+                    TC04_Off_Line_Det(Cnt,TC04_Thirteen_Buff, 6);//获取13号电池箱报文数据          
+                break;
+            case 0x0E:
+                    TC04_Off_Line_Det(Cnt,TC04_Fourteen_Buff, 6);//获取14号电池箱报文数据          
+                break;    
+            case 0x0F:
+                    TC04_Off_Line_Det(Cnt,TC04_Fifteen_Buff, 6);//获取15号电池箱报文数据          
+                break;
+            case 0x10:
+                    TC04_Off_Line_Det(Cnt,TC04_Sixteen_Buff, 6);//获取16号电池箱报文数据          
+                break;                                               
+            default:
+                break;    
+        }
     }
 }
 
@@ -928,117 +860,3 @@ u8 CAN_Sent_Time_Choice(void)
     }    
     return Ret_Val;
 }
-
-//*******************************************/
-//函数名:MCP2515_Data_Analysis
-//功  能:发送数据解析
-//参  数:无
-//返回值:无
-//时  间:20190819
-//创建者:ahren
-/*******************************************/
-void MCP2515_Data_Analysis(u8 Num_Cnt, u8 *Data_Buff, u8 Life_Cnt)
-{
-#if 1
-    if (0x00 == Data_Buff[1])//探测器系统正常
-    {
-        Data_Buff[0] = Num_Cnt;//电池箱编号  
-        Data_Buff[1] = 0x00;//灭火器系统正常
-        Data_Buff[2] = 0x00;//无故障码
-        Data_Buff[3] = 0xFF;//预留
-        Data_Buff[4] = 0xFF;//预留
-        Data_Buff[5] = 0xFF;//预留
-        Data_Buff[6] = 0xFF;//预留
-        Data_Buff[7] = Life_Cnt;//心跳包   
-    }  
-    else if (0x02 == Data_Buff[1])//探测器系统二级预警
-    {
-        Data_Buff[0] = Num_Cnt;//电池箱编号
-        Data_Buff[1] = 0x01;//预警级别  
-        Data_Buff[2] = 0x00;//无故障码
-        Data_Buff[3] = 0xFF;//预留
-        Data_Buff[4] = 0xFF;//预留
-        Data_Buff[5] = 0xFF;//预留
-        Data_Buff[6] = 0xFF;//预留
-        Data_Buff[7] = Life_Cnt;//心跳包         
-    } 
-    else if (0x03 == Data_Buff[1])//探测器系统三级预警
-    {
-        Data_Buff[0] = Num_Cnt;//电池箱编号
-        Data_Buff[1] = 0x02;//预警级别 
-        Data_Buff[2] = 0x00;//无故障码
-        Data_Buff[3] = 0xFF;//预留
-        Data_Buff[4] = 0xFF;//预留
-        Data_Buff[5] = 0xFF;//预留
-        Data_Buff[6] = 0xFF;//预留
-        Data_Buff[7] = Life_Cnt;//心跳包         
-    }  
-    else if (0x04 == Data_Buff[1])//探测器系统四级预警
-    {
-        Data_Buff[0] = Num_Cnt;//电池箱编号
-        Data_Buff[1] = 0x03;//预警级别  
-        Data_Buff[2] = 0x02;//探测器已启动
-        Data_Buff[3] = 0xFF;//预留
-        Data_Buff[4] = 0xFF;//预留
-        Data_Buff[5] = 0xFF;//预留
-        Data_Buff[6] = 0xFF;//预留
-        Data_Buff[7] = Life_Cnt;//心跳包
-    }   
-    else if (0xFF == Data_Buff[1])//探测器系统故障
-    {
-        if(0x90 == Data_Buff[7])
-        {
-            Data_Buff[1] = 0x10;//通讯故障         
-        }
-        else if(0x88 == Data_Buff[7])
-        {
-            Data_Buff[1] = 0x18;//传感器故障   
-        }
-        Data_Buff[0] = Num_Cnt;//电池箱编号 
-        Data_Buff[2] = 0x00;//
-        Data_Buff[3] = 0xFF;//预留
-        Data_Buff[4] = 0xFF;//预留
-        Data_Buff[5] = 0xFF;//预留
-        Data_Buff[6] = 0xFF;//预留
-        Data_Buff[7] = Life_Cnt;//心跳包
-    }
-    else
-    {
-        TBOX_CAN_Data_Normal[0] = 0x00;//TBOX 无故障代码      
-        TBOX_Error_Buff[0] = 0;
-        TBOX_Error_Buff[1] = 0;
-        TBOX_Error_Buff[2] = 0;
-    }
-
-#endif 
-}
-
-/*************************************************************************/
-//函数名:TBOX_MCP2515_Sent
-//功  能:发送到TBOX
-//参  数:发送数组首地址，数组长度
-//返回值：无
-//时间：20190803
-//创建者：ahren
-/************************************************************************/
-void TBOX_MCP2515_Sent(u8 BOX_Num, u8 *CAN_TX_Buf, u8 len)
-{
-	u8 j,dly;
-    dly=0;
-
-    while((MCP2515_ReadByte(MCP2515_TXB0CTRL)&0x08) && (dly<50))        //读取状态值，是否可以发送
-    {			
-        dly++;
-    }
-
-    for(j=0;j<len;j++)
-    {
-        MCP2515_WriteByte(MCP2515_TXB0D0 + j,TBOX_CAN_Data_Normal[j]);            //写入发送数据到发送缓冲区    
-    }
-
-    MCP2515_WriteByte(MCP2515_TXB0DLC, len);                            //写入发送的数据长度
-    MCP2515_CS = 0;
-    MCP2515_WriteByte(MCP2515_TXB0CTRL,0x08);                           //发送报文
-    MCP2515_CS = 1;  
-}
-

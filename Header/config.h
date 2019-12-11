@@ -36,6 +36,7 @@
 #include"workmode.h"
 #include"MCP2515.h"
 #include"canapp.h"
+#include"MCP2515_App.h"
 
 
 /*************************************/

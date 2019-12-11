@@ -34,6 +34,24 @@ extern u8 TC04_ID_Num[20];//ID数据存储
 extern u8 TC04_ID_Cnt[20];//ID统计
 extern u8 TC04_Off_Line_Val_Buff[20];//离线标志位
 extern u8 TC04_Off_Line_Cnt_Buff[20];//离线标志位
+
+extern u8 TC04_One_Buff[9];//1号电池箱CAN数据
+extern u8 TC04_Two_Buff[9];//2号电池箱CAN数据
+extern u8 TC04_Three_Buff[9];//3号电池箱CAN数据
+extern u8 TC04_Four_Buff[9];//4号电池箱CAN数据
+extern u8 TC04_Five_Buff[9];//5号电池箱CAN数据
+extern u8 TC04_Six_Buff[9];//6号电池箱CAN数据
+extern u8 TC04_Seven_Buff[9];//7号电池箱CAN数据
+extern u8 TC04_Eight_Buff[9];//8号电池箱CAN数据
+extern u8 TC04_Nine_Buff[9];//9号电池箱CAN数据
+extern u8 TC04_Ten_Buff[9];//10号电池箱CAN数据
+extern u8 TC04_Eleven_Buff[9];//10号电池箱CAN数据
+extern u8 TC04_Twelve_Buff[9];//10号电池箱CAN数据
+extern u8 TC04_Thirteen_Buff[9];//10号电池箱CAN数据
+extern u8 TC04_Fourteen_Buff[9];//10号电池箱CAN数据
+extern u8 TC04_Fifteen_Buff[9];//10号电池箱CAN数据
+extern u8 TC04_Sixteen_Buff[9];//10号电池箱CAN数据
+
 extern u8 TC04_Off_Time_Cnt_g;
 
 /***************函数申明**************/
@@ -65,6 +83,7 @@ u8 Sys_Time_Count_WorkMode(void)
 		Sys_Time_Count_g++;                         //系统任务时间分配计数加1
         Sys_Onesecond_Count_g++;	
         CAN_Sent_Time_Cnt_g++;//CAN 发送时间计数
+        TC04_Off_Time_Cnt_g++;
         
 		Power_ACC_Timer_Flag_g = 0x01;              //Power_ACC_Timer_Flag_g置1,用于ACC检测消抖计数
         Power_BU_Timer_Flag_g  = 0x01;              //Power_BU_Timer_Flag_g置1，用于BU检测消抖计数
@@ -254,7 +273,7 @@ static void Sys_Sleep_Work_Mode(void)
 		//arhen
 		/****************************************************************/	
         
-        MCP2515_Enter_Sleep_Mode();      
+        MCP2515_Sleep_Mode();      
 
         ACC_OFF_Sys_Init();		
 		/****************************************************************/
@@ -265,7 +284,24 @@ static void Sys_Sleep_Work_Mode(void)
         memset(TC04_ID_Cnt, 0, 20); // 将 TC04_ID_Cnt 数组清零
         memset(TC04_ID_Num, 0, 20); // 将 TC04_ID_Num 数组清零
         memset(TC04_Off_Line_Val_Buff, 0, 20); // 将 TC04_Off_Line_Val_Buff 数组清零
-        memset(TC04_Off_Line_Cnt_Buff, 0, 20); // 将 TC04_Off_Line_Cnt_Buff 数组清零        
+        memset(TC04_Off_Line_Cnt_Buff, 0, 20); // 将 TC04_Off_Line_Cnt_Buff 数组清零 
+        memset(TC04_One_Buff,0,9);   
+        memset(TC04_Two_Buff,0,9);
+        memset(TC04_Three_Buff,0,9);  
+        memset(TC04_Four_Buff,0,9);   
+        memset(TC04_Five_Buff,0,9);
+        memset(TC04_Six_Buff,0,9); 
+        memset(TC04_Seven_Buff,0,9);   
+        memset(TC04_Eight_Buff,0,9);
+        memset(TC04_Nine_Buff,0,9);                       
+        memset(TC04_Ten_Buff,0,9);
+        memset(TC04_Eleven_Buff,0,9); 
+        memset(TC04_Twelve_Buff,0,9);
+        memset(TC04_Thirteen_Buff,0,9); 
+        memset(TC04_Fourteen_Buff,0,9); 
+        memset(TC04_Fifteen_Buff,0,9);
+        memset(TC04_Sixteen_Buff,0,9); 
+            
 		/****************************************************************/       
 		//清除电池箱数量
 		//20191012

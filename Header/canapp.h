@@ -39,7 +39,6 @@ void Get_TC04_CAN_Data(void);
 void Sent_TC04_CAN_Data(void);
 
 void CAN_Data_Choice_Analysis(void);
-void MCP2515_Data_Analysis(u8 Num_Cnt, u8 *Data_Buff, u8 Life_Cnt);
 /*************************************/
 
 /*************************************/

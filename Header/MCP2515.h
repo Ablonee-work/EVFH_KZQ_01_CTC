@@ -20,20 +20,6 @@
 /******************宏定义*************/
 /**/
 /*************************************/
-#define MCP2515_SILENT          LATC0
-#define MCP2515_SILENT_ON       MCP2515_SILENT=0
-#define MCP2515_SILENT_OFF      MCP2515_SILENT=1
-
-
-#define MCP2515_MOSI    LATC5
-#define MCP2515_MISO    RC4
-#define MCP2515_SCK     LATC3
-#define MCP2515_CS      LATC1
-#define MCP2515_RESET   LATC2
-
-#define CAN_125Kbps	0x03        //4M 125k
-#define	CAN_250Kbps	0x01    //4M 250k  8M 500k
-//#define	CAN_250Kbps	0x03        //8M 250k
 
 #define MCP2515_CANSTAT         0x0E
 #define MCP2515_CANCTRL         0x0F
@@ -197,8 +183,8 @@
 #define MCP2515_B1BFM           0x02
 #define MCP2515_B0BFM           0x01
 
-#define MCP2515_SJW             0xC0
-#define MCP2515_BRP             0x3F
+// #define MCP2515_SJW             0xC0
+// #define MCP2515_BRP             0x3F
 
 #define MCP2515_BTLMODE         0x80
 #define MCP2515_SAM             0x40
@@ -212,10 +198,13 @@
 #define MCP2515_TXB1RTS         0x02
 #define MCP2515_TXB0RTS         0x01
 
-#define MCP2515_SJW_1TQ         0x40
-#define MCP2515_SJW_2TQ         0x80
-#define MCP2515_SJW_3TQ         0x90
+#define MCP2515_SJW_1TQ         0x00
+#define MCP2515_SJW_2TQ         0x40
+#define MCP2515_SJW_3TQ         0x80
 #define MCP2515_SJW_4TQ         0xC0
+
+#define MCP2515_BRP_2_F         0x00
+#define MCP2515_BRP_4_F         0x01
 
 #define MCP2515_BTLMODE_CNF3    0x80
 #define MCP2515_BTLMODE_PH1_IPT 0x00
@@ -340,15 +329,13 @@
 #define MCP2515_FILHIT1_FLTR_1  0x01
 #define MCP2515_FILHIT1_FLTR_0  0x00
 
-
-#define MCP2515_TXREQ_SET       0x08
 #define MCP2515_TXREQ_CLEAR     0x00
+#define MCP2515_TXREQ_SET       0x08
 
-#define MCP2515_TXP_HIGHEST     0x03
-#define MCP2515_TXP_INTER_HIGH  0x02
-#define MCP2515_TXP_INTER_LOW   0x01
 #define MCP2515_TXP_LOWEST      0x00
-    
+#define MCP2515_TXP_INTER_LOW   0x01    
+#define MCP2515_TXP_INTER_HIGH  0x02
+#define MCP2515_TXP_HIGHEST     0x03
 
  #define MCP2515_DLC_0          0x00
  #define MCP2515_DLC_1          0x01
@@ -360,22 +347,18 @@
  #define MCP2515_DLC_7          0x07    
  #define MCP2515_DLC_8          0x08
  
-
-
-#define MCP2515_CAN_RESET       0xC0
-#define MCP2515_CAN_READ        0x03
 #define MCP2515_CAN_WRITE       0x02
+#define MCP2515_CAN_READ        0x03
+#define MCP2515_CAN_BIT_MODIFY  0x05 
+#define MCP2515_CAN_LOAD_TX     0X40 
 #define MCP2515_CAN_RTS         0x80
 #define MCP2515_CAN_RTS_TXB0    0x81
 #define MCP2515_CAN_RTS_TXB1    0x82
 #define MCP2515_CAN_RTS_TXB2    0x84
-#define MCP2515_CAN_RD_STATUS   0xA0
-#define MCP2515_CAN_BIT_MODIFY  0x05  
-#define MCP2515_CAN_RX_STATUS   0xB0
 #define MCP2515_CAN_RD_RX_BUFF  0x90
-#define MCP2515_CAN_LOAD_TX     0X40  
-
-
+#define MCP2515_CAN_RD_STATUS   0xA0 
+#define MCP2515_CAN_RX_STATUS   0xB0
+#define MCP2515_CAN_RESET       0xC0 
 
 #define MCP2515_DUMMY_BYTE      0x00
 #define MCP2515_TXB0            0x31
@@ -387,30 +370,51 @@
 #define MCP2515_EXIDE_RESET     0x00
 
 
+#define MCP2515_SILENT_DIR      TRISC0
+#define MCP2515_CS_DIR          TRISC1
+#define MCP2515_RESET_DIR       TRISC2
+#define MCP2515_SCK_DIR         TRISC3
+#define MCP2515_MISO_DIR        TRISC4
+#define MCP2515_MOSI_DIR        TRISC5
+
+#define MCP2515_SILENT          LATC0
+#define MCP2515_CS              LATC1
+#define MCP2515_RESET           LATC2
+#define MCP2515_SCK             LATC3
+#define MCP2515_MISO            LATC4
+#define MCP2515_MOSI            LATC5
+
+#define MCP2515_SILENT_ON       MCP2515_SILENT=0
+#define MCP2515_SILENT_OFF      MCP2515_SILENT=1
+
+#define SYS_FOSC_4MHZ           0x04
+#define SYS_FOSC_8MHZ           0x08
+#define CAN_BRP_125             0x7D
+#define CAN_BRP_250             0xFA
+#define CAN_BRP_500             0x01F4
+
+
 /***************标志位申明************/
 /**/
-
 /*************************************/
 
 /***************变量定义**************/
 /**/
-/*************************************/
 u8 MCP2515_TxID[4]={0x18,0xFF,0x30,0x1D};
-u8 MCP2515_RxID[4]={0x18,0xFF,0x1D,0x00};         //验证PC端模拟发送多帧
+u8 MCP2515_RxID[4]={0x18,0xFF,0x1D,0x00}; 
+/*************************************/
+
 /***************函数申明**************/
 /**/
 /*************************************/
 
 void MCP2515_Init(void);
-u8 MCP2515_CAN_Rx_Buffer(u8 *CAN_RX_Buf);
-void MCP2515_CAN_Tx_Buffer(u8 BOX_Num, u8 *CAN_TX_Buf, u8 len,u8 Life_Signal);       
-void MCP2515_WriteByte(u8 addr,u8 dat);
-
-void MCP2515_CAN_TxID(u8 *ID, u8 len);
-void MCP2515_CAN_RxID(u8 *ID, u8 len);
-u8 MCP2515_ReadByte(u8 addr);
-u8 MCP2515_Enter_Sleep_Mode(void);
-
+void MCP2515_WriteByte(u8 Addr,u8 Data);
+void MCP2515_CAN_TxID(u8 *ID, u8 Len);
+void MCP2515_CAN_RxID(u8 *ID, u8 Len);
+u8 MCP2515_ReadByte(u8 Addr);
+u8 MCP2515_Rx_Buffer(u8 *CAN_RX_Buf);    
+u8 MCP2515_Sleep_Mode(void);
 /****************************************************************************/
 
 #endif
