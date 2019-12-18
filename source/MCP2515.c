@@ -192,21 +192,21 @@ void MCP2515_CAN_BaudRate(u8 Fosc, uint16 BRP)
     /***************************************************/    
     if (Fosc_Val == 0x08)
     {
-        if (BRP_Val == 0xFA)
+       if (BRP_Val == 0xFA)
         {
             //250Kbps
-            //BRP=X=1; Fosc=8; Y=0.5; 8Y=4; 1/8Y=1/4=0.25;
-            MCP2515_WriteByte(MCP2515_CNF1,MCP2515_SJW_1TQ|MCP2515_BRP_4_F);
-            MCP2515_WriteByte(MCP2515_CNF2,MCP2515_BTLMODE|MCP2515_PHSEG1_3TQ|MCP2515_PRSEG_1TQ);    	
-            MCP2515_WriteByte(MCP2515_CNF3,MCP2515_SOF_ENABLED|MCP2515_WAKFIL_ENABLED|MCP2515_PHSEG2_3TQ);    
+            //BRP=X=0; Fosc=8; Y=0.5; 8Y=4; 1/8Y=1/4=0.25;
+            MCP2515_WriteByte(MCP2515_CNF1,MCP2515_SJW_1TQ|MCP2515_BRP_2_F);
+            MCP2515_WriteByte(MCP2515_CNF2,MCP2515_BTLMODE|MCP2515_1_SAM|MCP2515_PHSEG1_8TQ|MCP2515_PRSEG_2TQ);    	
+            MCP2515_WriteByte(MCP2515_CNF3,MCP2515_SOF_ENABLED|MCP2515_WAKFIL_ENABLED|MCP2515_PHSEG2_5TQ);    
         }
         else if (BRP_Val == 0x01F4)
         {
             //500Kbps
             //BRP=X=0; Fosc=8; Y=0.25; 8Y=2; 1/8Y=1/2=0.5; 
             MCP2515_WriteByte(MCP2515_CNF1,MCP2515_SJW_1TQ|MCP2515_BRP_2_F);
-            MCP2515_WriteByte(MCP2515_CNF2,MCP2515_BTLMODE|MCP2515_PHSEG1_3TQ|MCP2515_PRSEG_1TQ);    	
-            MCP2515_WriteByte(MCP2515_CNF3,MCP2515_SOF_ENABLED|MCP2515_WAKFIL_ENABLED|MCP2515_PHSEG2_3TQ); 
+            MCP2515_WriteByte(MCP2515_CNF2,MCP2515_BTLMODE|MCP2515_PHSEG1_4TQ|MCP2515_PRSEG_1TQ);    	
+            MCP2515_WriteByte(MCP2515_CNF3,MCP2515_SOF_ENABLED|MCP2515_WAKFIL_ENABLED|MCP2515_PHSEG2_2TQ);       
         }
     }
     else if (Fosc_Val == 0x04)
@@ -251,10 +251,13 @@ void MCP2515_CAN_TxID(u8 *ID, u8 Len)
 
     //发送缓冲寄存器的标识符设置（扩展）
 	MCP2515_WriteByte(MCP2515_TXB0SIDH,SIDH); 
+    delay_10us(1000); 
 	MCP2515_WriteByte(MCP2515_TXB0SIDL,SIDL);
+    delay_10us(1000);     
 	MCP2515_WriteByte(MCP2515_TXB0EID8,ID[2]);
+    delay_10us(1000);     
 	MCP2515_WriteByte(MCP2515_TXB0EID0,ID[3]);
-
+    delay_10us(1000);   
     MCP2515_WriteByte(MCP2515_TXB0DLC,Len);			
 }
 

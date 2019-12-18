@@ -121,7 +121,7 @@ void Version_ID_Change(void)
     MCP2515_TxID[2] = 0xDA;  
     MCP2515_TxID[3] = 0x1D;      
     MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
-    delay_10us(1000); 
+    delay_10us(100); 
     NOP();NOP();NOP();NOP();NOP();NOP(); 
 }
 
@@ -132,7 +132,7 @@ void Meter_ID_Change(void)
     MCP2515_TxID[2] = 0x30;
     MCP2515_TxID[3] = 0x1D;                              
     MCP2515_CAN_TxID(MCP2515_TxID,8);//发送ID设置 
-    delay_10us(1000);     
+    delay_10us(100);     
     NOP();NOP();NOP();NOP();NOP();NOP(); 
 }
 

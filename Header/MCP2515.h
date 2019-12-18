@@ -187,7 +187,8 @@
 // #define MCP2515_BRP             0x3F
 
 #define MCP2515_BTLMODE         0x80
-#define MCP2515_SAM             0x40
+#define MCP2515_3_SAM           0x40
+#define MCP2515_1_SAM           0x00
 #define MCP2515_PHSEG1          0x38
 #define MCP2515_PRSEG           0x07
 
