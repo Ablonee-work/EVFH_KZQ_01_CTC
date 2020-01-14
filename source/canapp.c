@@ -656,7 +656,7 @@ void CAN_Data_Choice_Analysis(void)
         /**********************************/            
         if((Cnt_Num_Flag == 0) || (Cnt_Num_Flag == 0xFF))
         {
-            eeprom_write(0x03,0x02);//将电池箱数量写入内容EEPROM里面
+            eeprom_write(0x03,0x08);//将电池箱数量写入内容EEPROM里面
             NOP();NOP();NOP();NOP();
             Cnt_Num = eeprom_read(0x03);//将电池箱数量从EEPROM读出
             NOP();NOP();NOP();NOP();        

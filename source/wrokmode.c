@@ -167,46 +167,6 @@ void Sys_Function_Work(void)
 
         MCP2515_SILENT_ON;              //开启mcp2515 CAN使能PIN
     }
-#if 0        
-    //*******************************************/
-    //系统任务少，屏蔽任务分配功能
-    //时  间:20180610
-    //修改者:ahren 
-
-    Sys_Function_Work_Flag = Sys_Time_Count_WorkMode();
-
-    /*******************************************/       
-    
-    //Return_Time_Data = 0x00;
-    
-    switch(Sys_Function_Work_Flag)
-    {
-        case 1:
-#if 0
-                CAN_Interrupt_Occurred();           //can接收   //MCU CAN收，MCP2515 CAN发
-#endif
-            break;
-            
-        case 2:
-#if 0
-                MCP2515_Interrupt_Occurred();           //can2接收 //MCP2515 CAN收，MCU CAN发
-#endif
-            break;
-            
-        case 3:  
-#if 0
-                CAN_Send_Alarm_Warning_Data();       //MCU CAN1 发送心跳包
-#endif 
-#if 0
-                CAN2_Send_Alarm_Warning_Data();
-#endif
-            break;
-
-        default:
-            
-            break;
-    }
-#endif
 }
 
 //*******************************************/

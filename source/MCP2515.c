@@ -70,12 +70,7 @@ void SPI_Init(void)
 /************************************************************************/
 u8 SPI_RWByte(u8 dat)
 {    
-    //while(WCOL)WCOL=0;
-    if (WCOL)
-    {
-        WCOL=0;
-    }
-    
+    while(WCOL)WCOL=0;
     SSPBUF = dat;
     while(!BF);//缓冲区满状态位 1：满，0：空
     return SSPBUF;
@@ -192,42 +187,24 @@ void MCP2515_CAN_BaudRate(u8 Fosc, uint16 BRP)
     /***************************************************/    
     if (Fosc_Val == 0x08)
     {
-       if (BRP_Val == 0xFA)
+        if (BRP_Val == 0xFA)
         {
             //250Kbps
             //BRP=X=0; Fosc=8; Y=0.5; 8Y=4; 1/8Y=1/4=0.25;
             MCP2515_WriteByte(MCP2515_CNF1,MCP2515_SJW_1TQ|MCP2515_BRP_2_F);
-            MCP2515_WriteByte(MCP2515_CNF2,MCP2515_BTLMODE|MCP2515_1_SAM|MCP2515_PHSEG1_8TQ|MCP2515_PRSEG_2TQ);    	
-            MCP2515_WriteByte(MCP2515_CNF3,MCP2515_SOF_ENABLED|MCP2515_WAKFIL_ENABLED|MCP2515_PHSEG2_5TQ);    
+            MCP2515_WriteByte(MCP2515_CNF2,MCP2515_BTLMODE|MCP2515_1_SAM|MCP2515_PHSEG1_8TQ|MCP2515_PRSEG_1TQ);    	
+            MCP2515_WriteByte(MCP2515_CNF3,MCP2515_SOF_DISABLED|MCP2515_WAKFIL_DISABLED|MCP2515_PHSEG2_6TQ); 
+	            
         }
         else if (BRP_Val == 0x01F4)
         {
             //500Kbps
             //BRP=X=0; Fosc=8; Y=0.25; 8Y=2; 1/8Y=1/2=0.5; 
-            MCP2515_WriteByte(MCP2515_CNF1,MCP2515_SJW_1TQ|MCP2515_BRP_2_F);
-            MCP2515_WriteByte(MCP2515_CNF2,MCP2515_BTLMODE|MCP2515_PHSEG1_4TQ|MCP2515_PRSEG_1TQ);    	
-            MCP2515_WriteByte(MCP2515_CNF3,MCP2515_SOF_ENABLED|MCP2515_WAKFIL_ENABLED|MCP2515_PHSEG2_2TQ);       
+           MCP2515_WriteByte(MCP2515_CNF1,MCP2515_SJW_1TQ|MCP2515_BRP_2_F);
+           MCP2515_WriteByte(MCP2515_CNF2,MCP2515_BTLMODE|MCP2515_PHSEG1_4TQ|MCP2515_PRSEG_1TQ);    	
+           MCP2515_WriteByte(MCP2515_CNF3,MCP2515_SOF_DISABLED|MCP2515_WAKFIL_DISABLED|MCP2515_PHSEG2_2TQ); 
         }
-    }
-    else if (Fosc_Val == 0x04)
-    {
-        if (BRP_Val == 0x7D)
-        {
-            //125Kbps
-            //BRP=X=1; Fosc=4; Y=1; 8Y=8; 1/8Y=1/8=0.125;
-            MCP2515_WriteByte(MCP2515_CNF1,MCP2515_SJW_1TQ|MCP2515_BRP_4_F);
-            MCP2515_WriteByte(MCP2515_CNF2,MCP2515_BTLMODE|MCP2515_PHSEG1_3TQ|MCP2515_PRSEG_1TQ);    	
-            MCP2515_WriteByte(MCP2515_CNF3,MCP2515_SOF_ENABLED|MCP2515_WAKFIL_ENABLED|MCP2515_PHSEG2_3TQ);    
-        }
-        else if (BRP_Val == 0xFA)
-        {
-            //250Kbps
-            //BRP=X=0; Fosc=4; Y=0.5; 8Y=4; 1/8Y=1/4=0.25;
-            MCP2515_WriteByte(MCP2515_CNF1,MCP2515_SJW_1TQ|MCP2515_BRP_2_F);
-            MCP2515_WriteByte(MCP2515_CNF2,MCP2515_BTLMODE|MCP2515_PHSEG1_3TQ|MCP2515_PRSEG_1TQ);    	
-            MCP2515_WriteByte(MCP2515_CNF3,MCP2515_SOF_ENABLED|MCP2515_WAKFIL_ENABLED|MCP2515_PHSEG2_3TQ);    
-        }
-    }     			
+    }   			
 }
 
 /*************************************************************************/
@@ -251,14 +228,15 @@ void MCP2515_CAN_TxID(u8 *ID, u8 Len)
 
     //发送缓冲寄存器的标识符设置（扩展）
 	MCP2515_WriteByte(MCP2515_TXB0SIDH,SIDH); 
-    delay_10us(1000); 
+    delay_10us(100); 
 	MCP2515_WriteByte(MCP2515_TXB0SIDL,SIDL);
-    delay_10us(1000);     
+    delay_10us(100);     
 	MCP2515_WriteByte(MCP2515_TXB0EID8,ID[2]);
-    delay_10us(1000);     
+    delay_10us(100);     
 	MCP2515_WriteByte(MCP2515_TXB0EID0,ID[3]);
-    delay_10us(1000);   
-    MCP2515_WriteByte(MCP2515_TXB0DLC,Len);			
+    delay_10us(100);   
+    MCP2515_WriteByte(MCP2515_TXB0DLC,Len);	
+    delay_10us(100);  		
 }
 
 /*************************************************************************/
@@ -280,8 +258,6 @@ void MCP2515_CAN_RxID(u8 *ID, u8 len)
     SIDL = (ID[1] & 0x1C) << 3;
     SIDL = (ID[1] & 0x03) + SIDL + 0x08;
 
-    //只接收扩展帧报文数据
-	MCP2515_WriteByte(MCP2515_RXB0CTRL,0x40);
 	MCP2515_WriteByte(MCP2515_RXB0DLC,len);
 
 	//配置验收滤波寄存器标识符设置（扩展）
@@ -295,6 +271,19 @@ void MCP2515_CAN_RxID(u8 *ID, u8 len)
 	MCP2515_WriteByte(MCP2515_RXM0SIDL,0xFF);
 	MCP2515_WriteByte(MCP2515_RXM0EID8,0xFF);
 	MCP2515_WriteByte(MCP2515_RXM0EID0,0xFF);  
+
+	MCP2515_WriteByte(MCP2515_RXB1DLC,len);
+	//配置验收滤波寄存器标识符设置（扩展）
+	MCP2515_WriteByte(MCP2515_RXF1SIDH,SIDH);    
+	MCP2515_WriteByte(MCP2515_RXF1SIDL,SIDL);
+	MCP2515_WriteByte(MCP2515_RXF1EID8,ID[2]);
+	MCP2515_WriteByte(MCP2515_RXF1EID0,ID[3]);
+
+    //配置验收屏蔽寄存器标识符设置（扩展）
+    MCP2515_WriteByte(MCP2515_RXM1SIDH,0xFF);    
+	MCP2515_WriteByte(MCP2515_RXM1SIDL,0xFF);
+	MCP2515_WriteByte(MCP2515_RXM1EID8,0xFF);
+	MCP2515_WriteByte(MCP2515_RXM1EID0,0xFF);         
 }
 
 /*************************************************************************/
@@ -308,7 +297,6 @@ void MCP2515_CAN_RxID(u8 *ID, u8 len)
 void MCP2515_Init(void)
 {         
     SPI_Init();   
-    //delay_10ms(1); 
     delay_10us(10);   
 
     MCP2515_SILENT_DIR = 0;
@@ -320,38 +308,65 @@ void MCP2515_Init(void)
 
     MCP2515_RESET = 1;//关闭硬件复位
 	MCP2515_Reset();//软件复位,进入配置模式
-    delay_10us(5);    
+    delay_10ms(1);       
+    /**************************************************************************************/
+    //若软件复位没有进入配置模式，将通过设置寄存器进入配置模式
+    //20200114
+    //ahren
+	if(MCP2515_REQOP_CONFIG != (MCP2515_ReadByte(MCP2515_CANSTAT) & 0x80))         
+	{
+		MCP2515_WriteByte(MCP2515_CANCTRL,MCP2515_REQOP_CONFIG|MCP2515_ABORT_DISABLED|
+                          MCP2515_OSM_DISABLED|MCP2515_CLKOUT_DISABLED|MCP2515_CLKOUT_PRE_1);
+        delay_10ms(1);         
+	}
+    /**************************************************************************************/
+	MCP2515_WriteByte(MCP2515_TXRTSCTRL,0x00);//发送引脚状态设置                                        
+    delay_10us(10);  
 
-    MCP2515_CAN_BaudRate(SYS_FOSC_8MHZ,CAN_BRP_500);//波特率设置
-    delay_10us(5);  
+	MCP2515_WriteByte(MCP2515_BFPCTRL,0x00);//接收引脚状态设置                                        
+    delay_10us(10);     
+
+	MCP2515_WriteByte(MCP2515_CANINTE,0x00);//MCP2515中断设置                                        
+    delay_10us(10);  
+    
+    MCP2515_WriteByte(MCP2515_CANINTF,0x00);//中断标志位全部写0
+    delay_10us(10);   
+
+	MCP2515_WriteByte(MCP2515_TXB0CTRL,0x03); //配置发送缓冲器0                                       
+    delay_10us(10);  
+
+	MCP2515_WriteByte(MCP2515_TXB1CTRL,0x00); //配置发送缓冲器1                                       
+    delay_10us(10);  
+
+	MCP2515_WriteByte(MCP2515_TXB2CTRL,0x00); //配置发送缓冲器2                                        
+    delay_10us(10);               
 
     MCP2515_CAN_TxID(MCP2515_TxID,8); //发送ID设置 
-    delay_10us(5);  
+    delay_10us(10); 
+
+    //只接收扩展帧报文数据
+	MCP2515_WriteByte(MCP2515_RXB0CTRL,0x44);  
+	MCP2515_WriteByte(MCP2515_RXB1CTRL,0x40);       
 #if 0                                
 	MCP2515_CAN_RxID(MCP2515_RxID,8);//接收ID设置
-    delay_10ms(1);
+    delay_10us(10); 
 #endif    
-    
-	MCP2515_WriteByte(MCP2515_TXB0CTRL,0x03); //MCP2515发送优先级设置                                       
-    delay_10us(5);  
-    
-	MCP2515_WriteByte(MCP2515_CANINTE,0x00);//MCP2515中断设置                                        
-    delay_10us(5);  
 
+    MCP2515_CAN_BaudRate(SYS_FOSC_8MHZ,CAN_BRP_500);//波特率设置
+    delay_10ms(1);     
     //工作模式设置，设置成正常模式
-	MCP2515_WriteByte(MCP2515_CANCTRL,MCP2515_REQOP_NORMAL|MCP2515_CLKOUT_ENABLED);	
-    delay_10us(5);  
-
+    MCP2515_WriteByte(MCP2515_CANCTRL,MCP2515_REQOP_NORMAL|MCP2515_ABORT_DISABLED|
+                        MCP2515_OSM_DISABLED|MCP2515_CLKOUT_DISABLED|MCP2515_CLKOUT_PRE_1);    
+//	MCP2515_WriteByte(MCP2515_CANCTRL,MCP2515_REQOP_NORMAL|MCP2515_CLKOUT_ENABLED);	
+    delay_10ms(1);  
     //确认工作模式是否设置成功
 	if(MCP2515_OPMODE_NORMAL != (MCP2515_ReadByte(MCP2515_CANSTAT) & 0xE0))         
 	{
-		MCP2515_WriteByte(MCP2515_CANCTRL,MCP2515_REQOP_NORMAL|MCP2515_CLKOUT_ENABLED);
+		//MCP2515_WriteByte(MCP2515_CANCTRL,MCP2515_REQOP_NORMAL|MCP2515_CLKOUT_ENABLED);
+    MCP2515_WriteByte(MCP2515_CANCTRL,MCP2515_REQOP_NORMAL|MCP2515_ABORT_DISABLED|
+                      MCP2515_OSM_DISABLED|MCP2515_CLKOUT_DISABLED|MCP2515_CLKOUT_PRE_1);           
 	}
-    delay_10us(5);  
-    
-    //中断标志位全部写0
-    MCP2515_WriteByte(MCP2515_CANINTF,0x00);
-    delay_10us(5);   
+    delay_10ms(1);  
 }
 
 
@@ -377,12 +392,15 @@ void MCP2515_Tx_Buffer(u8 *CAN_TX_Buf, u8 len)
     //写入发送数据到发送缓冲区 
     for(i=0; i<len; i++)
     {
-        MCP2515_WriteByte(MCP2515_TXB0D0 + i, CAN_TX_Buf[i]);               
+        MCP2515_WriteByte(MCP2515_TXB0D0 + i, CAN_TX_Buf[i]);
+        delay_10us(5);                
     }
 
     MCP2515_CS = 0;    
-    MCP2515_WriteByte(MCP2515_TXB0DLC, len);//写入发送的数据长度                               
-    MCP2515_WriteByte(MCP2515_TXB0CTRL,0x0B);//发送报文                           
+    MCP2515_WriteByte(MCP2515_TXB0DLC, len);//写入发送的数据长度
+    delay_10us(5);                                    
+    MCP2515_WriteByte(MCP2515_TXB0CTRL,0x0B);//发送报文 
+    delay_10us(5);                               
     MCP2515_CS = 1;  
 }
 /*************************************************************************/
@@ -401,19 +419,21 @@ u8 MCP2515_Rx_Buffer(u8 *CAN_RX_Buf)
     u8 *reg = CAN_RX_Buf ;
 
     //读取中断标志位，是否接收完成    
-	temp = MCP2515_ReadByte(MCP2515_CANINTF);     
+	temp = MCP2515_ReadByte(MCP2515_CANINTF);
+    delay_10us(5);             
     //接收到的数据长度
     len = (MCP2515_ReadByte(MCP2515_RXB0DLC) & 0x0F);
-
+    delay_10us(5);    
 	if(temp & 0x01)
 	{
 		for(i=0; i<len; i++)
 		{	
-            *(reg + i) = MCP2515_ReadByte(MCP2515_RXB0D0+i);          
+            *(reg + i) = MCP2515_ReadByte(MCP2515_RXB0D0+i); 
+            delay_10us(5);          
 		}             
 	}               
     MCP2515_WriteByte(MCP2515_CANINTF,0); 
-
+    delay_10us(5); 
 	return len;
 }
 
@@ -431,9 +451,12 @@ u8 MCP2515_Sleep_Mode(void)
 
 	MCP2515_WriteByte(MCP2515_CANCTRL, MCP2515_REQOP_SLEEP);                //设置成睡眠模式
     NOP();NOP();NOP();NOP();
-	
+    //delay_10ms(1);   
+    delay_10us(5);      	
 	while(MCP2515_OPMODE_SLEEP != (MCP2515_ReadByte(MCP2515_CANSTAT) & 0xE0))//确认是否设置成功
 	{
+        //delay_10ms(1);  
+        delay_10us(5);           
         NOP();NOP();NOP();NOP();        
 		time_out++;
 		if(time_out>100)//超时处理
