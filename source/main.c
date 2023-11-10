@@ -35,8 +35,8 @@ __CONFIG(4,STVREN_ON&BBSIZ_BB1K);//堆栈满 / 下溢导致复位&1 kW 引导区大小
 
 __CONFIG(5,CP0_ON&CP1_ON&CP2_ON&CP3_ON&CPB_ON&CPD_ON);//所有代码保护
 
-//软件版本号：20011620
-__IDLOC(20011620); 
+//软件版本号：
+__IDLOC(23082801); 
 
 /********************************************************************************/
 
@@ -68,16 +68,20 @@ __IDLOC(20011620);
 void main(void)
 {
     BU_ON_Sys_Init();
-
     while(1)
-    {          
+    {     
+        TC04_CAN_Data_Process();            //探测器数据处理
+        
         Sys_Time_Count_WorkMode();			//调用系统时间计数函数
 
         Work_Mode_Choice();					//调用系统工作模式选择函数
         
         if(Work_Mode_Confirm_Flag_g == 0x01)
         {
-            Sent_TC04_CAN_Data();        
+            //接收探测器数据
+            Sent_TC04_CAN_Data();   
+              
+            MCP2515_User_Agreement();             
         }            
     }
 }

@@ -37,8 +37,8 @@
 /**/
 /*************************************/
 
-u8 Power_ACC_Timer_Flag_g = 0x00;			//电源ACC消抖延时标志位
-u8 Power_BU_Timer_Flag_g  = 0x00;           //电源BU消抖延时标志位
+extern u8 Power_ACC_Timer_Flag_g;			
+extern u8 Power_BU_Timer_Flag_g;           
 
 /***************函数申明**************/
 /**/

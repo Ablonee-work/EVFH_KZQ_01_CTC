@@ -126,7 +126,22 @@ void BU_ON_Sys_Init(void)
 //	delay_10us(20);  
     
     MCP2515_Init();
+    delay_10us(20);   
+    
+    Sleep_Mode_Init();
     delay_10us(20);     
+    
+    CAN_Init();
+ 	delay_10us(20);    
+    
+    RX8010_Init();
+    delay_10us(20);
+
+    CTC_BackupData_Init();    
+    delay_10us(20);
+    
+    memset(RxMsgBuff_Flag, 0, TC_DATA_BUFF);
+    
 }
 
 /*************************************************************************/
@@ -143,10 +158,7 @@ void BU_ON_Sys_Init(void)
 //时间：20180818 @ahren
 /************************************************************************/
 void ACC_ON_Sys_Init(void)
-{   
-    CAN_Init();
- 	delay_10us(20);     
-
+{     
 	Uart1_Init();                               //调用串口初始化函数
 	delay_10us(20);	
 
@@ -156,8 +168,8 @@ void ACC_ON_Sys_Init(void)
 //    CCP4_Comparer_Inint();                     //使能CCP4，输出方波
 // 	delay_10us(20);  
  
-    Sleep_Mode_Init();
-    delay_10us(20);     
+//    Sleep_Mode_Init();
+//    delay_10us(20);     
 
 /*********************用户函数*************************/    
     
@@ -187,8 +199,9 @@ void ACC_OFF_Sys_Init(void)
     
 	LED_Display = 1;						//LED
     LATC1 = 1;
-	MCP2515_SILENT_OFF;
-	CAN_STB_OFF;
+	MCP2515_SILENT_OFF();
+    //20210225-睡眠不关闭CAN
+	//CAN_STB_OFF();
 }
 
 /************************************************************************/

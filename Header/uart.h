@@ -29,14 +29,14 @@
 #define Uart_Send_number   300                               //定义发送多少个字节     
 #define Uart_Rece_Num   8                                  //定义接收多少字节
 
-u8 Uart_Send_Data[Uart_Send_number] = {0x00};              // 发送字节缓冲区
-u8 Uart_Rece_Data[Uart_Rece_Num]    = (0x00);                 //接收字节缓冲区
+
 
 /***************标志位申明************/
 /**/
 /*************************************/
-bit UART_Rece_Interrupt_Flag_g = 0;
-u8 receive_num = 0;     //总共收到的字节数
+extern u8 Uart_Rece_Data[Uart_Rece_Num];                 
+extern bit UART_Rece_Interrupt_Flag_g;
+extern u8 receive_num;     
 
 /******************函数声明*************/
 /**/

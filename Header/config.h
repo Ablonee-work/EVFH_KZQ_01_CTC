@@ -20,6 +20,7 @@
 
 #include<pic18.h>
 #include <string.h>
+#include <stdint.h>
 #include"define.h"
 #include"delay.h"
 #include"sys_init.h"
@@ -37,8 +38,8 @@
 #include"MCP2515.h"
 #include"canapp.h"
 #include"MCP2515_App.h"
-
-
+#include "RX8010.h"
+#include "w25qxx.h"
 /*************************************/
 
 #endif

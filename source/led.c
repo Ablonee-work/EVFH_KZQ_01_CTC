@@ -61,10 +61,5 @@ void Led_Display_Init(void)
 /*******************************************/
 void Led_Display_Fuction(void)
 {	
-    if(Sys_Onesecond_Flag_g)
-    {
-        Sys_Onesecond_Flag_g = 0x00;
-        
-        LED_Display =! LED_Display;
-    }		
+    LED_Display =! LED_Display;		
 }

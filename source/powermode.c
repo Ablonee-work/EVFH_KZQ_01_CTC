@@ -29,6 +29,9 @@
 /***************标志位申明************/
 /**/
 /*************************************/
+u8 Power_ACC_Timer_Flag_g = 0x00;			//电源ACC消抖延时标志位
+u8 Power_BU_Timer_Flag_g  = 0x00;           //电源BU消抖延时标志位
+
 
 static u8 ACC_DET_State_Count_g = 0x00;			//ACC状态检测计数 
 static u8 ACC_DET_State_Flag_g  = 0x00;			//ACC状态检测计数 
@@ -188,6 +191,17 @@ u8 Power_Work_Mode_Confirm()
     u8 BU_Work_Mode_Value  = 0x01;
            
 	ACC_Work_Mode_Value = Power_ACC_State_Det();	//读取ACC状态返回值,01有检到
+    if((Sys_Sleep_Flag == 3)||(Sys_Sleep_Flag == 4))
+    {
+        if(ACC_Work_Mode_Value == 0x01)
+        {
+            Sys_Sleep_Flag  = 0;
+        }
+        else 
+        {
+            ACC_Work_Mode_Value = 0x01;
+        }   
+    }
 #if 1
 	//BU_Work_Mode_Value  = Power_BU_State_Det();     //读取BU状态返回值，01有检到
   
@@ -204,15 +218,4 @@ u8 Power_Work_Mode_Confirm()
         return (0x02);								//ACC OFF工作模式返回值
     }
 #endif
-
- #if 0 
-	if(ACC_Work_Mode_Value)
-	{		
-		return (0x01);								//ACC ON工作模式返回值
-	}
-	else
-	{		
-		return (0x02);								//ACC OFF工作模式返回值
-	}
-#endif 	
 }

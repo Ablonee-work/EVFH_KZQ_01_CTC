@@ -26,7 +26,7 @@
 /**/
 
 /*************************************/
-
+u8 Sys_Time_Falg_g = 0x00;				//系统时间基值：5ms
 
 /***************函数申明**************/
 /**/
@@ -102,6 +102,8 @@ static void Clear_Timer0_Flag(void)
 /*************************************************/
 static void Clear_Timer1_Flag(void)
 {
+    static uint16 time_cnt = 0;
+    
 	/***********************************/
 	/*TMR1 中断*/
 	/**********************************/
@@ -117,6 +119,18 @@ static void Clear_Timer1_Flag(void)
         TMR1L=0xFD;	
 
         Sys_Time_Falg_g = 0x01;
+        
+        //精准计时
+        time_cnt++;
+        if(time_cnt>=200)//1秒计时
+        {
+            time_cnt = 0;
+            
+            if(Mamual_Start == 1)
+            {
+                TC_C1_R_10Min++;
+            }
+        }
 		TMR1IE = 1;
 	}
 }
@@ -219,11 +233,9 @@ void Clear_CAN_Flag(void)
 	/***************************************************/	
 	if(1==RXB0IF)					           //CAN 总线接收中断，优先级最高
 	{	
-		RXB0IF=0;					
-			
-//		CAN_RXD_Interrupt_Flag_g = 1;
-#if 1
-        Get_TC04_CAN_Data();		
+		RXB0IF=0;							
+#if 1	
+        Get_TC04_CAN_Data();
 #endif
 	}    
 }

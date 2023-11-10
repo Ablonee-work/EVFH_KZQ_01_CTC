@@ -57,8 +57,10 @@ dkms.conf
 *.mine
 /build
 /debug
-/dist
 /HEX
 /nbproject
 /funclist
 /Makefile
+
+/dist/default/production/*
+!/dist/default/production/*.hex

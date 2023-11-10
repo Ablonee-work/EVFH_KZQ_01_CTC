@@ -31,12 +31,9 @@
 /**/
 /*************************************/
 
-u8 Work_Mode_Confirm_Flag_g = 0x00;				//工作模式确认标志位
-u8 Sys_Onesecond_Flag_g = 0x00;
-
-u8 Implement_Only_1_Variable = 0x00; //当检测到ACC时才初始化那些用户函数，上电只执行一次  
-
-u8 Sys_Onesecond_Count_g = 0x00;         //1秒时间计数标志位
+extern u8 Work_Mode_Confirm_Flag_g;				
+extern u8 Implement_Only_1_Variable;
+extern u8 Sys_Onesecond_Count_g;        
 /***************函数申明**************/
 /**/
 /*************************************/
